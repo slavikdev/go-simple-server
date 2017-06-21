@@ -3,7 +3,7 @@
  * @Date:   2017-06-22T01:20:59+03:00
  * @Email:  shinkarenko.vi@gmail.com
  * @Last modified by:   Slavik
- * @Last modified time: 2017-06-22T02:35:42+03:00
+ * @Last modified time: 2017-06-22T02:41:01+03:00
  * @Copyright: Viacheslav Shynkarenko. All Rights Reserved.
  */
 
@@ -11,6 +11,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 )
@@ -36,6 +37,7 @@ func NewServer(rqlog *RequestLog) *Server {
 
 // Start starts the server to listen for HTTP requests.
 func (server *Server) Start() error {
+	fmt.Printf("Server has been started at %s", defaultEndpoint)
 	return http.ListenAndServe(defaultEndpoint, nil)
 }
 
