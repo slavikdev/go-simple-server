@@ -1,0 +1,22 @@
+# @Author: Viacheslav Shynkarenko <Slavik>
+# @Date:   2017-06-21T20:12:35+03:00
+# @Email:  shinkarenko.vi@gmail.com
+# @Last modified by:   Slavik
+# @Last modified time: 2017-06-21T20:13:11+03:00
+# @Copyright: Viacheslav Shynkarenko. All Rights Reserved.
+
+language: go
+
+go:
+  - 1.5
+  - 1.6
+  - 1.7
+  - tip
+
+sudo: false
+
+before_install:
+  - go get -t -v ./...
+
+script:
+  - go test -race -coverprofile=coverage.txt -covermode=atomic
