@@ -3,7 +3,7 @@
  * @Date:   2017-06-21T20:40:26+03:00
  * @Email:  shinkarenko.vi@gmail.com
  * @Last modified by:   Slavik
- * @Last modified time: 2017-06-21T22:37:29+03:00
+ * @Last modified time: 2017-06-22T01:15:16+03:00
  * @Copyright: Viacheslav Shynkarenko. All Rights Reserved.
  */
 
@@ -42,6 +42,12 @@ func TestHitsCleanup(t *testing.T) {
 		assertHits(t, i, currentTotal)
 		time.Sleep(10 * time.Second)
 	}
+}
+
+func TestNewRequestLogFromState(t *testing.T) {
+	state := CreateFakeState()
+	rqlog := NewRequestLogFromState(state)
+	assertHits(t, len(state.Log), rqlog.MinuteHitsTotal())
 }
 
 func assertHits(t *testing.T, expected int, actual int) {
