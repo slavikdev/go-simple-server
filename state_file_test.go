@@ -3,7 +3,7 @@
  * @Date:   2017-06-22T00:37:49+03:00
  * @Email:  shinkarenko.vi@gmail.com
  * @Last modified by:   Slavik
- * @Last modified time: 2017-06-22T00:56:22+03:00
+ * @Last modified time: 2017-06-22T01:10:47+03:00
  * @Copyright: Viacheslav Shynkarenko. All Rights Reserved.
  */
 
@@ -11,7 +11,6 @@ package main
 
 import (
 	"io/ioutil"
-	"log"
 	"os"
 	"testing"
 	"time"
@@ -26,7 +25,7 @@ func TestLoadNoFile(t *testing.T) {
 	os.Remove(stateFileName)
 	stateFile := NewStateFile()
 	state := stateFile.Load()
-	assertDefaultState(state)
+	assertDefaultState(t, state)
 }
 
 func TestLoadBadFile(t *testing.T) {
@@ -34,7 +33,7 @@ func TestLoadBadFile(t *testing.T) {
 	ioutil.WriteFile(stateFileName, []byte("bad-json"), 0644)
 	stateFile := NewStateFile()
 	state := stateFile.Load()
-	assertDefaultState(state)
+	assertDefaultState(t, state)
 }
 
 func TestSave(t *testing.T) {
@@ -44,19 +43,17 @@ func TestSave(t *testing.T) {
 	loadedState := stateFile.Load()
 	loadedLen := len(loadedState.Log)
 	originalLen := len(state.Log)
-	if loadedLen != originalLen {
-		log.Fatalf("Expected log length to be %d, but it was %d.", originalLen, loadedLen)
-	}
+	assertHits(t, originalLen, loadedLen)
 	for idx, originalTime := range state.Log {
 		if originalTime.Sub(loadedState.Log[idx]).Seconds() > 1.0 {
-			log.Fatalf("Expected timestamp %v to match %v.", originalTime, loadedState.Log[idx])
+			t.Errorf("Expected timestamp %v to match %v.", originalTime, loadedState.Log[idx])
 		}
 	}
 }
 
-func assertDefaultState(state *State) {
+func assertDefaultState(t *testing.T, state *State) {
 	logLen := len(state.Log)
 	if logLen != 0 {
-		log.Fatalf("Expected default log length to be 0, but it was %d.", logLen)
+		t.Errorf("Expected default log length to be 0, but it was %d.", logLen)
 	}
 }
