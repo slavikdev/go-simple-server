@@ -3,7 +3,7 @@
  * @Date:   2017-06-21T20:15:17+03:00
  * @Email:  shinkarenko.vi@gmail.com
  * @Last modified by:   Slavik
- * @Last modified time: 2017-06-21T22:18:45+03:00
+ * @Last modified time: 2017-06-21T22:50:09+03:00
  * @Copyright: Viacheslav Shynkarenko. All Rights Reserved.
  */
 
@@ -30,17 +30,29 @@ func NewRequestLog() *RequestLog {
 
 // Hit adds current time to the log.
 func (requestLog *RequestLog) Hit() {
-	requestLog.log = append(requestLog.log, time.Now())
+	requestLog.touchLog(func() {
+		requestLog.log = append(requestLog.log, time.Now())
+	})
 }
 
 // MinuteHitsTotal returns the amount of hits occured in the past 60 sec.
-func (requestLog *RequestLog) MinuteHitsTotal() int {
-	// Remove old records.
-	for idx, timestamp := range requestLog.log {
-		if time.Since(timestamp).Seconds() <= 60 {
-			requestLog.log = requestLog.log[idx:]
-			return len(requestLog.log)
+func (requestLog *RequestLog) MinuteHitsTotal() (total int) {
+	requestLog.touchLog(func() {
+		// Remove old records.
+		for idx, timestamp := range requestLog.log {
+			if time.Since(timestamp).Seconds() <= 60 {
+				requestLog.log = requestLog.log[idx:]
+				break
+			}
 		}
-	}
-	return len(requestLog.log)
+		total = len(requestLog.log)
+	})
+	return
+}
+
+// touchLog locks state using mutex and performs specific operation on log.
+func (requestLog *RequestLog) touchLog(touch func()) {
+	requestLog.mutex.Lock()
+	touch()
+	requestLog.mutex.Unlock()
 }
