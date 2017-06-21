@@ -3,7 +3,7 @@
  * @Date:   2017-06-22T01:20:59+03:00
  * @Email:  shinkarenko.vi@gmail.com
  * @Last modified by:   Slavik
- * @Last modified time: 2017-06-22T01:35:48+03:00
+ * @Last modified time: 2017-06-22T02:35:42+03:00
  * @Copyright: Viacheslav Shynkarenko. All Rights Reserved.
  */
 
@@ -44,6 +44,7 @@ func (server *Server) mapHandlers() {
 }
 
 func (server *Server) handleRequest(w http.ResponseWriter, req *http.Request) {
+	server.rqlog.Hit()
 	response := serverResponse{MinuteHitsCount: server.rqlog.MinuteHitsTotal()}
 	server.respondJSON(response, w)
 }
